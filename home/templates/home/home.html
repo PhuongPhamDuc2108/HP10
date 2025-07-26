@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Travel Website - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'home:home' %}">Travel Website</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'home:orders' %}">Đơn hàng</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'home:logout' %}">Đăng xuất</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'home:login' %}">Đăng nhập</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'home:register' %}">Đăng ký</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<header class="bg-primary text-white text-center py-5 mb-4">
+  <div class="container">
+    <h1>Chào mừng đến với Travel Website</h1>
+    <p>Khám phá vé máy bay, khách sạn, tour và xe đưa đón</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="row mb-4">
+    <div class="col">
+      <form method="get" action="{% url 'home:search' %}">
+        <div class="input-group">
+          <input type="text" name="q" class="form-control" placeholder="Tìm kiếm khách sạn hoặc vé máy bay..." />
+          <select name="type" class="form-select" style="max-width: 150px;" aria-label="Chọn loại tìm kiếm">
+            <option value="hotel">Khách sạn</option>
+            <option value="flight">Vé máy bay</option>
+          </select>
+          <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <h2>Danh mục</h2>
+  <div class="row">
+    {% for category in categories %}
+    <div class="col-md-3 mb-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">{{ category }}</h5>
+          <!-- You can add icons or images here -->
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2>Khách sạn</h2>
+  <div class="row">
+    {% for hotel in hotels %}
+    <div class="col-md-4 mb-3">
+      <div class="card">
+        {% if hotel.images.all %}
+        <div id="carouselHotel{{ hotel.id }}" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            {% for image in hotel.images.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ hotel.name }}">
+            </div>
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselHotel{{ hotel.id }}" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselHotel{{ hotel.id }}" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+        {% else %}
+        <img src="https://via.placeholder.com/400x200?text=No+Image" class="card-img-top" alt="{{ hotel.name }}">
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ hotel.name }}</h5>
+          <p class="card-text">{{ hotel.description|truncatewords:20 }}</p>
+          <a href="{% url 'home:detail' 'hotel' hotel.id %}" class="btn btn-primary">Xem chi tiết</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2>Tour</h2>
+  <div class="row">
+    {% for location in locations %}
+    <div class="col-md-4 mb-3">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ location.name }}</h5>
+          <p class="card-text">{{ location.description|truncatewords:20 }}</p>
+          <a href="{% url 'home:detail' 'location' location.id %}" class="btn btn-primary">Xem chi tiết</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

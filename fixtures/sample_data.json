@@ -1,0 +1,68 @@
+[
+  {
+    "model": "home.location",
+    "pk": 1,
+    "fields": {
+      "name": "Hà Nội",
+      "description": "Thủ đô của Việt Nam"
+    }
+  },
+  {
+    "model": "home.location",
+    "pk": 2,
+    "fields": {
+      "name": "Hồ Chí Minh",
+      "description": "Thành phố lớn nhất Việt Nam"
+    }
+  },
+  {
+    "model": "home.hotel",
+    "pk": 1,
+    "fields": {
+      "name": "Khách sạn Hà Nội Center",
+      "location": 1,
+      "description": "Khách sạn 4 sao trung tâm Hà Nội",
+      "price": "1200000.00",
+      "rating": 4.5,
+      "image": ""
+    }
+  },
+  {
+    "model": "home.hotel",
+    "pk": 2,
+    "fields": {
+      "name": "Khách sạn Sài Gòn Luxury",
+      "location": 2,
+      "description": "Khách sạn 5 sao tại trung tâm TP.HCM",
+      "price": "1500000.00",
+      "rating": 4.8,
+      "image": ""
+    }
+  },
+  {
+    "model": "home.flightticket",
+    "pk": 1,
+    "fields": {
+      "flight_number": "VN123",
+      "origin": 1,
+      "destination": 2,
+      "departure_time": "2024-07-01T08:00:00Z",
+      "arrival_time": "2024-07-01T10:00:00Z",
+      "price": "2000000.00",
+      "rating": 4.7
+    }
+  },
+  {
+    "model": "home.flightticket",
+    "pk": 2,
+    "fields": {
+      "flight_number": "VN456",
+      "origin": 2,
+      "destination": 1,
+      "departure_time": "2024-07-02T14:00:00Z",
+      "arrival_time": "2024-07-02T16:00:00Z",
+      "price": "2100000.00",
+      "rating": 4.6
+    }
+  }
+]

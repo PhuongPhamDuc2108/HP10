@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Đơn hàng của tôi - Travel Website</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home:home' %}">Travel Website</a>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <h2>Đơn hàng của tôi</h2>
+  {% if bookings %}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Loại</th>
+          <th>Tên</th>
+          <th>Ngày đặt</th>
+          <th>Trạng thái</th>
+          <th>Chi tiết</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for booking in bookings %}
+        <tr>
+          <td>{{ booking.booking_type|title }}</td>
+          <td>
+            {% if booking.booking_type == 'hotel' and booking.hotel %}
+              {{ booking.hotel.name }}
+            {% elif booking.booking_type == 'flight' and booking.flight %}
+              {{ booking.flight.flight_number }}
+            {% else %}
+              N/A
+            {% endif %}
+          </td>
+          <td>{{ booking.booking_date }}</td>
+          <td>{{ booking.status|title }}</td>
+          <td>
+            {% if booking.booking_type == 'hotel' and booking.hotel %}
+              <a href="{% url 'home:detail' item_type='hotel' item_id=booking.hotel.id %}">Xem</a>
+            {% elif booking.booking_type == 'flight' and booking.flight %}
+              <a href="{% url 'home:detail' item_type='flight' item_id=booking.flight.id %}">Xem</a>
+            {% else %}
+              N/A
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Bạn chưa có đơn hàng nào.</p>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
