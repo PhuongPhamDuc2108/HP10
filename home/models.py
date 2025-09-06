@@ -23,7 +23,7 @@ class Hotel(models.Model):
     name = models.CharField(max_length=200)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='hotels')
     description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Starting price for rooms")
     rating = models.FloatField(default=0)
     stars = models.IntegerField(choices=STAR_CHOICES, default=3)
     address = models.CharField(max_length=255, blank=True)
@@ -33,8 +33,77 @@ class Hotel(models.Model):
     def get_amenities_list(self):
         return [amenity.strip() for amenity in self.amenities.split(',') if amenity.strip()]
 
+    def get_cheapest_room(self):
+        rooms = self.rooms.all()
+        if rooms:
+            return rooms.order_by('price').first()
+        return None
+
     def __str__(self):
         return self.name
+
+class Room(models.Model):
+    ROOM_TYPE_CHOICES = [
+        ('standard', 'Standard Room'),
+        ('deluxe', 'Deluxe Room'),
+        ('suite', 'Suite'),
+        ('family', 'Family Room'),
+        ('executive', 'Executive Room'),
+        ('villa', 'Villa'),
+    ]
+
+    BED_TYPE_CHOICES = [
+        ('single', 'Single Bed'),
+        ('twin', 'Twin Beds'),
+        ('double', 'Double Bed'),
+        ('queen', 'Queen Bed'),
+        ('king', 'King Bed'),
+    ]
+
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms')
+    name = models.CharField(max_length=200)
+    room_type = models.CharField(max_length=20, choices=ROOM_TYPE_CHOICES, default='standard')
+    bed_type = models.CharField(max_length=20, choices=BED_TYPE_CHOICES, default='single')
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    capacity = models.IntegerField(default=2, help_text="Maximum number of guests")
+    size = models.IntegerField(default=0, help_text="Room size in square meters")
+    services = models.TextField(blank=True, help_text="Comma-separated list of services")
+    is_available = models.BooleanField(default=True)
+
+    # Basic amenities
+    is_non_smoking = models.BooleanField(default=True, help_text="Non-smoking room")
+    has_waiting_area = models.BooleanField(default=False, help_text="Has waiting area")
+
+    # Room amenities
+    has_air_conditioning = models.BooleanField(default=True, help_text="Has air conditioning")
+    has_mini_bar = models.BooleanField(default=False, help_text="Has mini bar")
+    has_free_bottled_water = models.BooleanField(default=True, help_text="Provides free bottled water")
+    has_refrigerator = models.BooleanField(default=False, help_text="Has refrigerator")
+    has_tv = models.BooleanField(default=True, help_text="Has TV")
+    has_desk = models.BooleanField(default=True, help_text="Has desk")
+
+    # Bathroom amenities
+    has_hot_water = models.BooleanField(default=True, help_text="Has hot water")
+    has_private_bathroom = models.BooleanField(default=True, help_text="Has private bathroom")
+    has_shower = models.BooleanField(default=True, help_text="Has shower")
+    has_toiletries = models.BooleanField(default=True, help_text="Provides toiletries")
+    has_bathtub = models.BooleanField(default=False, help_text="Has bathtub")
+    has_hair_dryer = models.BooleanField(default=False, help_text="Has hair dryer")
+    has_bathrobes = models.BooleanField(default=False, help_text="Provides bathrobes")
+
+    def get_services_list(self):
+        return [service.strip() for service in self.services.split(',') if service.strip()]
+
+    def __str__(self):
+        return f"{self.name} - {self.hotel.name}"
+
+class RoomImage(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='rooms/')
+
+    def __str__(self):
+        return f"Image for {self.room.name} in {self.room.hotel.name}"
 
 class HotelImage(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='images')
